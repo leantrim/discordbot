@@ -1,0 +1,12 @@
+{
+  "extends": [
+    "prettier"
+  ],
+  "rules": {
+    "quotes": ["error", "single"],
+    "eqeqeq": ["error", "always"],
+    "object-curly-spacing": ["error", "always", { "arraysInObjects": true }],
+    "comma-spacing": ["error", { "before": false, "after": true }]
+  },
+  "ignorePatterns": ["node_modules/"]
+}
