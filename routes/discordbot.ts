@@ -8,7 +8,6 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   const botSettings = await Bot.find();
-  console.log(botSettings);
 
   // If we dont find any botsettings
   if(!botSettings.length){

@@ -1,5 +1,5 @@
 import axios from "axios";
-import config from "../../socket/reddit/config"
+import config  from "./config"
 import client from "discord/bot";
 import discordCommands from "../services"
 import { EmbedBuilder } from "@discordjs/builders";
@@ -39,7 +39,7 @@ const warnAboutPosts = (bot: IDiscordBot) => {
 }
 
 const renderPosts = async (bot: IDiscordBot) => {
-    return await axios.get<any>(`${config.REDDIT_URL}${config.REDDIT_NSWF_URL}?limit=${bot.nsfwAutoPosterSettings.postsToFetch}`).then(result => renderTopPosts(result.data.data.children, bot) );
+    return await axios.get<any>(`${config.config.REDDIT_URL}${config.config.REDDIT_NSWF_URL}?limit=${bot.nsfwAutoPosterSettings.postsToFetch}`).then(result => renderTopPosts(result.data.data.children, bot) );
 }
 
 const renderTopPosts = ( result: TopListAll[], bot: IDiscordBot ) => {
