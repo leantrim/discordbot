@@ -1,6 +1,4 @@
-import axios from "axios";
 import { ActivityType, Client, GatewayIntentBits, REST, SlashCommandBuilder, Routes, EmbedBuilder, TextChannel } from 'discord.js'
-import { IDiscordBot } from "types/IDiscordBot";
 import services from "./services"
 
 
