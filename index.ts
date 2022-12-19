@@ -1,10 +1,12 @@
-const client = require("./discord/bot");
-const discordbot = require("./discord/discordbot");
-const mongoose = require("mongoose");
-const express = require("express");
+import client from "./discord/bot"
+import discordbot from "./routes/discordbot"
+import mongoose from "mongoose"
+import express from "express"
+import env from 'dotenv';
 
 const app = express();
 
+env.config();
 app.use(express.json());
 app.use("/api/discordbot", discordbot);
 

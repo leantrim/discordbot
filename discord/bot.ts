@@ -1,4 +1,6 @@
+import axios from 'axios';
 import { ActivityType, Client, GatewayIntentBits, REST, SlashCommandBuilder, Routes, EmbedBuilder, TextChannel } from 'discord.js'
+import messageReceived from './pterodactyl';
 import services from "./services"
 
 
@@ -11,6 +13,7 @@ const client = new Client({
         GatewayIntentBits.MessageContent
     ],
 });
+
 
 client.on('ready', async () => {
     console.log('bot is ready');
@@ -27,6 +30,7 @@ client.on("messageCreate", async (message) => {
 
     const messageArray = message.content.split(" ");
     const argument = messageArray.slice(1);
+    messageReceived(message);
 
     if(command === 'help'){
         const helpMessage = new EmbedBuilder()
