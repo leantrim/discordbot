@@ -3,7 +3,6 @@ import botDefaultData from "discord/topnsfwposts/config";
 import express from "express";
 import { IDiscordBot } from "types/IDiscordBot";
 import { validateDiscordBot as validate, Bot } from "../models/Discordbot";
-import url from "url"
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -18,7 +17,7 @@ router.get('/', async (req, res) => {
 
 const createBotSettingsInDb = async () => {
   try {
-      const { data } = await axios.post<IDiscordBot[]>('http://localhost:8000/api/discordbot', botDefaultData);
+      const { data } = await axios.post<IDiscordBot[]>('http://localhost:8000/api/discordbot', botDefaultData.botDefaultData);
       return data;
   } catch (error) {
     console.log(error);

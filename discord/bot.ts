@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { ActivityType, Client, GatewayIntentBits, REST, SlashCommandBuilder, Routes, EmbedBuilder, TextChannel } from 'discord.js'
+import { ActivityType, Client, GatewayIntentBits, EmbedBuilder, TextChannel } from 'discord.js'
 import messageReceived from './pterodactyl';
 import services from "./services"
 
@@ -42,7 +41,7 @@ client.on("messageCreate", async (message) => {
         .addFields(
             { name: `Update the post time`, value: `!time HH:MM` },
             { name: `Channel To Post NSFW updates`, value: `!channel (Be in the channel you want updates to)` },
-            { name: `Amount of Posts`, value: `!post amount` },
+            { name: `Amount of Posts`, value: `!posts amount` },
         )
 	    .setTimestamp()
 	    .setFooter({ text: `powered by Lean`, iconURL: 'https://media.discordapp.net/attachments/1029381113916956702/1029398619192836176/vp3-nobg.png?width=671&height=671' });
@@ -107,15 +106,14 @@ client.on("messageCreate", async (message) => {
     }
 
     if(command === 'activity'){
-        const name = await getChannelName(message.channelId);
-        message.channel.send(`Channel updated to: ${name}`);
+        const messageArray = message.content.split(" ");
+        const argument = messageArray.slice(1);
+        const modifiedArgument = argument.join(" ");
 
-        const data = {
-            nsfwAutoPosterSettings: {
-                channelId: message.channelId
-            }
+        if(!argument) {
+            message.channel.send(`USAGE: !activity activity status`);
         }
-        services.updateNswfPostChannel(data, 'channelId');
+        client.user?.setActivity(modifiedArgument);
     }
 })
 

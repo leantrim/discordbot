@@ -1,12 +1,12 @@
-import { IDiscordBot } from "types/IDiscordBot";
-import Joi from "joi";
-import mongoose, { Schema, Model } from "mongoose";
+import { IDiscordBot } from 'types/IDiscordBot';
+import Joi from 'joi';
+import mongoose, { Schema, Model } from 'mongoose';
 
 const botSchema: Schema<IDiscordBot> = new mongoose.Schema({
   name: { type: String },
-  activityType: { type: Number  },
+  activityType: { type: Number },
   activity: { type: String },
-  nsfwAutoPosterSettings: { 
+  nsfwAutoPosterSettings: {
     channelId: { type: String },
     postsToFetch: { type: Number },
     autoUpdater: { type: Boolean },
@@ -15,10 +15,10 @@ const botSchema: Schema<IDiscordBot> = new mongoose.Schema({
     bannedSubs: { type: [String] },
     bannedUrls: { type: [String] },
     postTime: { type: String },
-  }
+  },
 });
 
-const Bot: Model<IDiscordBot> = mongoose.model("Bot", botSchema);
+const Bot: Model<IDiscordBot> = mongoose.model('Bot', botSchema);
 
 const validateDiscordBot = (bot: IDiscordBot) => {
   const schema = Joi.object({
@@ -29,13 +29,12 @@ const validateDiscordBot = (bot: IDiscordBot) => {
       postsToFetch: Joi.number(),
       channelId: Joi.string(),
       autoUpdater: Joi.boolean(),
-      lastUpdated:  Joi.date(),
+      lastUpdated: Joi.date(),
       postTime: Joi.string(),
       bannedSubs: Joi.array(),
       bannedUrls: Joi.array(),
       postList: Joi.array(),
-
-    }
+    },
   });
   return schema.validate(bot);
 };

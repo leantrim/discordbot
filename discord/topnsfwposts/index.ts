@@ -16,6 +16,8 @@ const topPosts = async (bot: IDiscordBot) => {
     client.user?.setActivity(bot.activity || 'Not defined', { type: bot.activityType });
 
     POST_CHANNEL = bot.nsfwAutoPosterSettings.channelId || DEFAULT_CHANNEL;
+
+    console.log(POST_CHANNEL);
     
     const getHour = bot.nsfwAutoPosterSettings.postTime?.split(':')[0] || '22';
     const getMinute = bot.nsfwAutoPosterSettings.postTime?.split(':')[1] || '00';
@@ -33,7 +35,6 @@ const topPosts = async (bot: IDiscordBot) => {
 }
 
 const warnAboutPosts = (bot: IDiscordBot) => {
-    const date = new Date();
     discordCommands.updateDiscordChannelDescription(client, `Last updated:  | Next update: ${bot.nsfwAutoPosterSettings.postTime}`, POST_CHANNEL);
     setTimeout(() => renderPosts(bot), 5000);
 }
