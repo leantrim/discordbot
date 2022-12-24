@@ -16,7 +16,6 @@ const messageReceived = async (message: any) => {
   const command = args.shift()?.toLowerCase();
 
   if (command === 'servers') {
-    console.log('CMD detected');
     // anrop
     allocations = await services.getPanelRequest('nodes/1/allocations');
     const assignedAllocations: Allocations[] = allocations.filter(
@@ -28,7 +27,6 @@ const messageReceived = async (message: any) => {
       return a.attributes.container.environment.SRCDS_APPID ? 1 : -1;
     });
     for (const server of sortedServers) {
-      console.log(server.attributes.container.environment.SERVER_VISIBLE_IN_DISCORD);
       if (server.attributes.container.environment.SERVER_VISIBLE_IN_DISCORD === '1') {
         const allocation = assignedAllocations.find(
           (allocation) => allocation.attributes.id === server.attributes.allocation,
@@ -36,14 +34,14 @@ const messageReceived = async (message: any) => {
         if (allocation) {
           server.attributes.allocationType = allocation;
         }
-        const regex = new RegExp(server.attributes.name, 'i');
-        const app = appList.find((app) => regex.test(app.name));
-        console.log(app);
-        const embed = buildGameServerEmbed(server);
+        const app = appList.find((app) => app.eggAppId === server.attributes.container.environment.SRCDS_APPID);
         let row; // Component button
-        let shortenedUrl = '';
         row = buildEmbedButton(server);
-        message.channel.send({ embeds: [embed], components: [row] });
+        if (app) {
+          const embed = buildGameServerEmbed(server, app.imageUrl);
+          message.channel.send({ embeds: [embed], components: [row] });
+        } else {
+        }
       }
     }
   }
@@ -75,7 +73,7 @@ const buildEmbedButton = (server: Servers) => {
 // 	    .setFooter({ text: `Voiplay Server`, iconURL: DEFAULT_IMAGE });
 //     return serverEmbed;
 // }
-const buildGameServerEmbed = (server: Servers) => {
+const buildGameServerEmbed = (server: Servers, bannerImg: string) => {
   const ip = 'voiplay.se';
   const port = server.attributes.allocationType.attributes.port;
   const status = server.attributes.suspended ? 'Stopped' : 'Running';
@@ -94,7 +92,7 @@ const buildGameServerEmbed = (server: Servers) => {
     .addFields({ name: 'IP', value: `${ip}`, inline: true })
     .addFields({ name: 'PORT', value: `${port}`, inline: true })
     .addFields({ name: 'Status', value: status, inline: true })
-    .setImage(`https://cdn.akamai.steamstatic.com/steam/apps/108600/header.jpg`)
+    .setImage(bannerImg)
     .setTimestamp()
     .setFooter({ text: 'Server hosted by Voiplay', iconURL: DEFAULT_IMAGE });
   return serverEmbed;
