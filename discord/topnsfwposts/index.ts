@@ -17,8 +17,6 @@ const topPosts = async (bot: IDiscordBot) => {
 
   POST_CHANNEL = bot.nsfwAutoPosterSettings.channelId || DEFAULT_CHANNEL;
 
-  console.log(POST_CHANNEL);
-
   const getHour = bot.nsfwAutoPosterSettings.postTime?.split(':')[0] || '22';
   const getMinute = bot.nsfwAutoPosterSettings.postTime?.split(':')[1] || '00';
 
