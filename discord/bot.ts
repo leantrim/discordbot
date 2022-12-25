@@ -13,7 +13,7 @@ const client = new Client({
 });
 
 client.on('ready', async () => {
-  console.log('bot is ready');
+  console.log('bot is ready', client.user);
   client.user?.setActivity('Loading Settings...', { type: ActivityType.Watching });
   services.loadBotSettings();
 });
