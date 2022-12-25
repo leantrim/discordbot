@@ -29,5 +29,3 @@ app.listen(8000, () => console.log('Listening on port 8000...'));
 
 // Initate Discord bot
 client.login(process.env.DISCORD_TOKEN);
-
-console.log('Test=?!');
