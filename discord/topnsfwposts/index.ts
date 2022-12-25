@@ -13,8 +13,8 @@ const DEFAULT_CHANNEL = '1031233747368038531';
 let POST_CHANNEL: string;
 
 const topPosts = async (bot: IDiscordBot) => {
-  console.log(bot);
   client.user?.setActivity(bot.activity || 'Not defined', { type: bot.activityType });
+  console.log('Activity should be set!', bot.activity);
 
   POST_CHANNEL = bot.nsfwAutoPosterSettings.channelId || DEFAULT_CHANNEL;
 

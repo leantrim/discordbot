@@ -39,8 +39,10 @@ const updateNswfPostChannel = async (data: any, route: string) => {
 };
 
 const loadBotSettings = async () => {
+  console.log('Loading Bot Setings');
   try {
     const { data } = await axios.get<IDiscordBot[]>('http://localhost:8000/api/discordbot');
+    console.log(data[0]);
     topPosts(data[0]);
   } catch (error) {
     console.log(error);
