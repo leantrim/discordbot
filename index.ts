@@ -23,6 +23,7 @@ mongoose
   )
   .then(() => console.log('Connected to MongoDB...'))
   .catch((err) => console.log('Could not connect to MongoDB...', err));
+mongoose.set('strictQuery', false);
 
 app.listen(8000, () => console.log('Listening on port 8000...'));
 
