@@ -14,7 +14,7 @@ let POST_CHANNEL: string;
 
 const topPosts = async (bot: IDiscordBot) => {
   client.user?.setActivity(bot.activity || 'Not defined', { type: bot.activityType });
-  console.log('Activity should be set!', bot.activity);
+  console.log('Activity should be set!', bot.activity, client);
 
   POST_CHANNEL = bot.nsfwAutoPosterSettings.channelId || DEFAULT_CHANNEL;
 
