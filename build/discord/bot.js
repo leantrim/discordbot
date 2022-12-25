@@ -18,7 +18,7 @@ const client = new discord_js_1.Client({
 client.on('ready', async () => {
     console.log('bot is ready');
     client.user?.setActivity('Loading Settings...', { type: discord_js_1.ActivityType.Watching });
-    services_1.default.loadBotSettings();
+    services_1.default.loadBotSettings(client);
 });
 const prefix = '!';
 client.on('messageCreate', async (message) => {
@@ -62,7 +62,7 @@ client.on('messageCreate', async (message) => {
                     postsToFetch: amount,
                 },
             };
-            services_1.default.updateNswfPostChannel(data, 'postsToFetch');
+            services_1.default.updateNswfPostChannel(data, 'postsToFetch', client);
             message.channel.send(`post amount updated ${amount}`);
         }
     }
@@ -78,7 +78,7 @@ client.on('messageCreate', async (message) => {
                     postTime: time,
                 },
             };
-            services_1.default.updateNswfPostChannel(data, 'postTime');
+            services_1.default.updateNswfPostChannel(data, 'postTime', client);
             message.channel.send(`Post time set to ${time}`);
         }
     }
@@ -90,7 +90,7 @@ client.on('messageCreate', async (message) => {
                 channelId: message.channelId,
             },
         };
-        services_1.default.updateNswfPostChannel(data, 'channelId');
+        services_1.default.updateNswfPostChannel(data, 'channelId', client);
     }
     if (command === 'activity') {
         const messageArray = message.content.split(' ');

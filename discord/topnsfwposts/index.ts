@@ -1,24 +1,20 @@
 import axios from 'axios';
 import config from './config';
-import client from 'discord/bot';
 import discordCommands from '../services';
 import { EmbedBuilder } from '@discordjs/builders';
 import TopList from './types/TopListType';
 import TopListAll from './types/TopListAllType';
 import { IDiscordBot } from 'types/IDiscordBot';
+import { Client } from 'discord.js';
 import schedule from 'node-schedule';
 import services from '../services';
 
 const DEFAULT_CHANNEL = '1031233747368038531';
 let POST_CHANNEL: string;
 
-const topPosts = async (bot: IDiscordBot) => {
-  if (!client.user) {
-    console.log(client.user, 'Seems to be not ready :(');
-  } else {
-    client.user.setActivity(bot.activity || 'Not defined', { type: bot.activityType });
-    console.log('Activity should be set!', bot.activity, client);
-  }
+const topPosts = async (bot: IDiscordBot, client: Client) => {
+  console.log('lets add something? :D');
+  client.user?.setActivity(bot.activity || 'Not defined', { type: bot.activityType });
 
   POST_CHANNEL = bot.nsfwAutoPosterSettings.channelId || DEFAULT_CHANNEL;
 
@@ -33,33 +29,33 @@ const topPosts = async (bot: IDiscordBot) => {
   discordCommands.updateDiscordChannelDescription(client, `Next update: ${getHour}:${getMinute}`, POST_CHANNEL);
 
   schedule.scheduleJob(rule, function () {
-    warnAboutPosts(bot);
+    warnAboutPosts(bot, client);
   });
 };
 
-const warnAboutPosts = (bot: IDiscordBot) => {
+const warnAboutPosts = (bot: IDiscordBot, client: Client) => {
   discordCommands.updateDiscordChannelDescription(
     client,
     `Last updated:  | Next update: ${bot.nsfwAutoPosterSettings.postTime}`,
     POST_CHANNEL,
   );
-  setTimeout(() => renderPosts(bot), 5000);
+  setTimeout(() => renderPosts(bot, client), 5000);
 };
 
-const renderPosts = async (bot: IDiscordBot) => {
+const renderPosts = async (bot: IDiscordBot, client: Client) => {
   return await axios
     .get<any>(
       `${config.config.REDDIT_URL}${config.config.REDDIT_NSWF_URL}?limit=${bot.nsfwAutoPosterSettings.postsToFetch}`,
     )
-    .then((result) => renderTopPosts(result.data.data.children, bot));
+    .then((result) => renderTopPosts(result.data.data.children, bot, client));
 };
 
-const renderTopPosts = (result: TopListAll[], bot: IDiscordBot) => {
+const renderTopPosts = (result: TopListAll[], bot: IDiscordBot, client: Client) => {
   result.map((item: TopListAll) => {
     const nsfwItem: TopList = item.data;
     if (isAllowedToPass(bot, nsfwItem)) {
       const createNswfItem = dbToObject(nsfwItem);
-      embedAndSendMessage(createNswfItem, bot);
+      embedAndSendMessage(createNswfItem, bot, client);
       bot.nsfwAutoPosterSettings.postList?.push(nsfwItem.id);
     }
   });
@@ -68,7 +64,7 @@ const renderTopPosts = (result: TopListAll[], bot: IDiscordBot) => {
       postList: bot.nsfwAutoPosterSettings.postList,
     },
   };
-  services.updateNswfPostChannel(data, 'postList');
+  services.updateNswfPostChannel(data, 'postList', client);
 };
 
 const isAllowedToPass = (bot: IDiscordBot, nsfwItem: TopList) => {
@@ -82,7 +78,7 @@ const isAllowedToPass = (bot: IDiscordBot, nsfwItem: TopList) => {
   return false;
 };
 
-const embedAndSendMessage = (item: TopList, bot: IDiscordBot) => {
+const embedAndSendMessage = (item: TopList, bot: IDiscordBot, client: Client) => {
   if (isImage(item.url)) {
     const nsfwEmbed = buildNsfwMessage(item);
     discordCommands.sendEmbededBotMessageToChannel(client, nsfwEmbed, POST_CHANNEL);

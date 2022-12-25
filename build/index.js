@@ -19,6 +19,7 @@ const MONGODB = {
     port: process.env.MONGODB_PORT,
     db: process.env.MONGODB_DB,
 };
+mongoose_1.default.set('strictQuery', false);
 mongoose_1.default
     .connect(`mongodb://${MONGODB.user}:${MONGODB.password}@${MONGODB.ip}:${MONGODB.port}/${MONGODB.db}?authSource=${MONGODB.db}&authMechanism=DEFAULT`)
     .then(() => console.log('Connected to MongoDB...'))

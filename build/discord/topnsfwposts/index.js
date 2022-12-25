@@ -5,15 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
 const config_1 = __importDefault(require("./config"));
-const bot_1 = __importDefault(require("discord/bot"));
 const services_1 = __importDefault(require("../services"));
 const builders_1 = require("@discordjs/builders");
 const node_schedule_1 = __importDefault(require("node-schedule"));
 const services_2 = __importDefault(require("../services"));
 const DEFAULT_CHANNEL = '1031233747368038531';
 let POST_CHANNEL;
-const topPosts = async (bot) => {
-    bot_1.default.user?.setActivity(bot.activity || 'Not defined', { type: bot.activityType });
+const topPosts = async (bot, client) => {
+    client.user?.setActivity(bot.activity || 'Not defined', { type: bot.activityType });
     POST_CHANNEL = bot.nsfwAutoPosterSettings.channelId || DEFAULT_CHANNEL;
     const getHour = bot.nsfwAutoPosterSettings.postTime?.split(':')[0] || '22';
     const getMinute = bot.nsfwAutoPosterSettings.postTime?.split(':')[1] || '00';
@@ -21,26 +20,26 @@ const topPosts = async (bot) => {
     rule.tz = 'Europe/Berlin';
     rule.hour = getHour;
     rule.minute = getMinute;
-    services_1.default.updateDiscordChannelDescription(bot_1.default, `Next update: ${getHour}:${getMinute}`, POST_CHANNEL);
+    services_1.default.updateDiscordChannelDescription(client, `Next update: ${getHour}:${getMinute}`, POST_CHANNEL);
     node_schedule_1.default.scheduleJob(rule, function () {
-        warnAboutPosts(bot);
+        warnAboutPosts(bot, client);
     });
 };
-const warnAboutPosts = (bot) => {
-    services_1.default.updateDiscordChannelDescription(bot_1.default, `Last updated:  | Next update: ${bot.nsfwAutoPosterSettings.postTime}`, POST_CHANNEL);
-    setTimeout(() => renderPosts(bot), 5000);
+const warnAboutPosts = (bot, client) => {
+    services_1.default.updateDiscordChannelDescription(client, `Last updated:  | Next update: ${bot.nsfwAutoPosterSettings.postTime}`, POST_CHANNEL);
+    setTimeout(() => renderPosts(bot, client), 5000);
 };
-const renderPosts = async (bot) => {
+const renderPosts = async (bot, client) => {
     return await axios_1.default
         .get(`${config_1.default.config.REDDIT_URL}${config_1.default.config.REDDIT_NSWF_URL}?limit=${bot.nsfwAutoPosterSettings.postsToFetch}`)
-        .then((result) => renderTopPosts(result.data.data.children, bot));
+        .then((result) => renderTopPosts(result.data.data.children, bot, client));
 };
-const renderTopPosts = (result, bot) => {
+const renderTopPosts = (result, bot, client) => {
     result.map((item) => {
         const nsfwItem = item.data;
         if (isAllowedToPass(bot, nsfwItem)) {
             const createNswfItem = dbToObject(nsfwItem);
-            embedAndSendMessage(createNswfItem, bot);
+            embedAndSendMessage(createNswfItem, bot, client);
             bot.nsfwAutoPosterSettings.postList?.push(nsfwItem.id);
         }
     });
@@ -49,7 +48,7 @@ const renderTopPosts = (result, bot) => {
             postList: bot.nsfwAutoPosterSettings.postList,
         },
     };
-    services_2.default.updateNswfPostChannel(data, 'postList');
+    services_2.default.updateNswfPostChannel(data, 'postList', client);
 };
 const isAllowedToPass = (bot, nsfwItem) => {
     if (!bot.nsfwAutoPosterSettings.bannedSubs?.includes(nsfwItem.subreddit) &&
@@ -59,13 +58,13 @@ const isAllowedToPass = (bot, nsfwItem) => {
     }
     return false;
 };
-const embedAndSendMessage = (item, bot) => {
+const embedAndSendMessage = (item, bot, client) => {
     if (isImage(item.url)) {
         const nsfwEmbed = buildNsfwMessage(item);
-        services_1.default.sendEmbededBotMessageToChannel(bot_1.default, nsfwEmbed, POST_CHANNEL);
+        services_1.default.sendEmbededBotMessageToChannel(client, nsfwEmbed, POST_CHANNEL);
     }
     else {
-        services_1.default.sendBotMessageToChannel(bot_1.default, item.url, POST_CHANNEL);
+        services_1.default.sendBotMessageToChannel(client, item.url, POST_CHANNEL);
     }
 };
 const buildNsfwMessage = (item) => {

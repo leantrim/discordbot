@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
-const bot_1 = __importDefault(require("./bot"));
 const topnsfwposts_1 = __importDefault(require("./topnsfwposts"));
 const updateDiscordChannelDescription = async (client, message, channelId) => {
     if (!client.token)
@@ -33,21 +32,21 @@ const sendEmbededBotMessageToChannel = async (client, embededMessage, channelId)
     }
     channel.send({ embeds: [embededMessage] });
 };
-const updateNswfPostChannel = async (data, route) => {
+const updateNswfPostChannel = async (data, route, client) => {
     await axios_1.default.put(`http://localhost:8000/api/discordbot/nsfw/${route}`, data);
-    loadBotSettings();
+    loadBotSettings(client);
 };
-const loadBotSettings = async () => {
+const loadBotSettings = async (client) => {
     try {
         const { data } = await axios_1.default.get('http://localhost:8000/api/discordbot');
-        (0, topnsfwposts_1.default)(data[0]);
+        (0, topnsfwposts_1.default)(data[0], client);
     }
     catch (error) {
         console.log(error);
     }
 };
-const getChannelName = async (channelId) => {
-    const channel = (await bot_1.default.channels.fetch(channelId));
+const getChannelName = async (channelId, client) => {
+    const channel = (await client.channels.fetch(channelId));
     if (!channel) {
         return console.log('no channel was found..');
     }

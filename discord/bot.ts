@@ -13,9 +13,9 @@ const client = new Client({
 });
 
 client.on('ready', async () => {
-  console.log('bot is ready', client.user);
+  console.log('bot is ready');
   client.user?.setActivity('Loading Settings...', { type: ActivityType.Watching });
-  services.loadBotSettings();
+  services.loadBotSettings(client);
 });
 
 const prefix = '!';
@@ -72,7 +72,7 @@ client.on('messageCreate', async (message) => {
           postsToFetch: amount,
         },
       };
-      services.updateNswfPostChannel(data, 'postsToFetch');
+      services.updateNswfPostChannel(data, 'postsToFetch', client);
       message.channel.send(`post amount updated ${amount}`);
     }
   }
@@ -91,7 +91,7 @@ client.on('messageCreate', async (message) => {
           postTime: time,
         },
       };
-      services.updateNswfPostChannel(data, 'postTime');
+      services.updateNswfPostChannel(data, 'postTime', client);
       message.channel.send(`Post time set to ${time}`);
     }
   }
@@ -105,7 +105,7 @@ client.on('messageCreate', async (message) => {
         channelId: message.channelId,
       },
     };
-    services.updateNswfPostChannel(data, 'channelId');
+    services.updateNswfPostChannel(data, 'channelId', client);
   }
 
   if (command === 'activity') {
